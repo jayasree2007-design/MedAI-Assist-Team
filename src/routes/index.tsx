@@ -6,11 +6,12 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { SiteHeader } from "@/components/SiteHeader";
+
 import { SiteFooter } from "@/components/SiteFooter";
 //import heroImg from "@/assets/hero-health.jpg";
 import heroImg from "@/assets/homepage.png";
 import heartImg from "@/assets/hero-heart.png";
+import { SiteHeader } from "@/components/ui/SiteHeader";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -25,8 +26,7 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   return (
-    <div className="min-h-screen bg-background">
-      <SiteHeader />
+    <div className="min-h-screen m-0 p-0 bg-background">
       <Hero />
       <HowItWorks />
       <JourneyCards />
@@ -37,6 +37,8 @@ function Landing() {
       <Testimonials />
       <CTASection />
       <SiteFooter />
+      
+
     </div>
   );
 }
@@ -115,7 +117,7 @@ function Landing() {
 } */
 function Hero() {
   return (
-    <section className="relative w-full overflow-hidden bg-white">
+    <section className="relative m-0 w-full overflow-hidden p-0 bg-white">
       {/* Heartbeat animation – only the heart layer pulses (lub-dub) */}
       <style>{`
         @keyframes heart-lub-dub {

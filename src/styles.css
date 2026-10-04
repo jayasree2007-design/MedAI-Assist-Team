@@ -530,3 +530,6 @@
     animation: none !important;
   }
 }
+.site-content{
+  padding-top:0px;
+}

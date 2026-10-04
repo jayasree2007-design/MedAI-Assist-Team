@@ -57,7 +57,7 @@ function Appointment() {
 
   return (
     <div className="min-h-screen bg-background">
-      <SiteHeader />
+      
       <main className="container mx-auto max-w-4xl px-4 py-10">
         <Link to="/" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
           <ArrowLeft className="h-3 w-3" /> Back to home
