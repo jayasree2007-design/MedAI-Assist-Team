@@ -74,7 +74,7 @@ function Appointment() {
                 <Input required value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="SrinivasRao" />
               </Field>
               <Field label="Phone Number" icon={Phone}>
-                <Input required value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="+1 555 123 4567" />
+                <Input required value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="+919345872064" />
               </Field>
               <Field label="Email" icon={Mail}>
                 <Input required type="email" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="you@email.com" />
