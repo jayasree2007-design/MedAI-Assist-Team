@@ -71,7 +71,7 @@ function Appointment() {
           <form onSubmit={submit} className="mt-8 rounded-3xl border border-border bg-card p-6 shadow-soft md:p-8">
             <div className="grid gap-5 md:grid-cols-2">
               <Field label="Patient Name" icon={UserIcon}>
-                <Input required value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="John Doe" />
+                <Input required value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="Srinivas" />
               </Field>
               <Field label="Phone Number" icon={Phone}>
                 <Input required value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="+1 555 123 4567" />
