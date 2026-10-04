@@ -15,7 +15,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "AI Health Assistant — Smarter Healthcare with AI" },
-      { name: "description", content: "Personalized symptom guidance, medical report analysis, doctor appointments, and AI-powered recovery tracking — all in one healthcare platform." },
+      { name: "description", content: "Personalized symptom guidance, medical report and lab analysis, doctor appointments, and AI-powered recovery tracking — all in one healthcare platform." },
       { property: "og:title", content: "AI Health Assistant — Smarter Healthcare with AI" },
       { property: "og:description", content: "From your first symptom to your full recovery — guided by intelligent, doctor-friendly AI." },
     ],
@@ -436,8 +436,8 @@ function DoctorPreview() {
                   </div>
                   <Badge className={
                     p.r === "high" ? "bg-destructive text-destructive-foreground" :
-                    p.r === "medium" ? "bg-warning text-warning-foreground" :
-                    "bg-secondary text-secondary-foreground"
+                      p.r === "medium" ? "bg-warning text-warning-foreground" :
+                        "bg-secondary text-secondary-foreground"
                   }>
                     {p.r === "high" && <AlertTriangle className="mr-1 h-3 w-3" />}
                     {p.r.toUpperCase()}
