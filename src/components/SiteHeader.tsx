@@ -5,7 +5,7 @@ import logo from "@/assets/logo.webp";
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-blue-300 bg-blue-400 shadow-md">
+    <header className="sticky top-0 z-40 m-0 w-full border-b border-blue-300 bg-blue-400 p-0 shadow-md">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
 
         {/* Logo + Name */}

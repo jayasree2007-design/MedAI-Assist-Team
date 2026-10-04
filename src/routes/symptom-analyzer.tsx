@@ -414,7 +414,7 @@ function SymptomAnalyzer() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <SiteHeader />
+      
       <main className="container mx-auto flex w-full max-w-4xl flex-1 flex-col px-4 py-8">
         <div className="mb-5 flex items-center justify-between">
           <div>

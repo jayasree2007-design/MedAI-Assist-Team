@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+
 import { ArrowLeft, Stethoscope } from "lucide-react";
 import "@/components/doctors/doctors.css";
 import { DOCTORS } from "@/components/doctors/doctors-data";
