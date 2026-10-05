@@ -417,7 +417,7 @@ function DoctorPreview() {
               ))}
             </ul>
             <Button asChild className="mt-7 bg-secondary text-secondary-foreground hover:bg-secondary/90">
-              <Link to="/doctor-dashboard">Open Doctor Dashboard <ArrowRight className="ml-2 h-4 w-4" /></Link>
+              <Link to="/doctors">Open Doctor Dashboard <ArrowRight className="ml-2 h-4 w-4" /></Link>
             </Button>
           </div>
           <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
