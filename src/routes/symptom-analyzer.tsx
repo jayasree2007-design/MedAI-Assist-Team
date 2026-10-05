@@ -710,7 +710,7 @@ function SymptomAnalyzer() {
             <DialogHeader>
               <DialogTitle>Book a Doctor Appointment</DialogTitle>
               <DialogDescription>
-                Select your preferred date and time so that the AI can finalize
+                Select your preferred date & time so that the AI can finalize
                 booking after your call.
               </DialogDescription>
             </DialogHeader>
