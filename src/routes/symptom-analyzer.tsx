@@ -1,11 +1,26 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Bot, Send, User, Sparkles, AlertTriangle, ShieldCheck, Calendar, ArrowLeft, RotateCcw, Phone, Check } from "lucide-react";
+import {
+  Bot,
+  Send,
+  User,
+  Sparkles,
+  AlertTriangle,
+  ShieldCheck,
+  Calendar,
+  ArrowLeft,
+  RotateCcw,
+  Phone,
+  Check,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { PatientDetailsForm, type PatientDetails } from "@/components/PatientDetailsForm";
+import {
+  PatientDetailsForm,
+  type PatientDetails,
+} from "@/components/PatientDetailsForm";
 import {
   analyzeSeverity,
   nextFollowUp,
@@ -33,7 +48,11 @@ export const Route = createFileRoute("/symptom-analyzer")({
   head: () => ({
     meta: [
       { title: "Symptom Analyzer — AI Health Assistant" },
-      { name: "description", content: "Chat with our AI to understand your symptoms before seeing a doctor." },
+      {
+        name: "description",
+        content:
+          "Chat with our AI to understand your symptoms before seeing a doctor.",
+      },
     ],
   }),
   component: SymptomAnalyzer,
@@ -42,10 +61,23 @@ export const Route = createFileRoute("/symptom-analyzer")({
 type Msg =
   | { role: "ai"; content: string }
   | { role: "user"; content: string }
-  | { role: "result"; severity: Severity; summary: string; advice: string[]; onBook?: () => void };
+  | {
+      role: "result";
+      severity: Severity;
+      summary: string;
+      advice: string[];
+      onBook?: () => void;
+    };
 
-const STARTER = "Hello 👋 I'm your AI health assistant. Can I know how you feel today? Describe your symptoms in your own words.";
-const EXAMPLES = ["I have fever", "I have chest pain", "I have stomach discomfort", "My skin is itchy", "I feel tired all the time"];
+const STARTER =
+  "Hello 👋 I'm your AI health assistant. Can I know how you feel today? Describe your symptoms in your own words.";
+const EXAMPLES = [
+  "I have fever",
+  "I have chest pain",
+  "I have stomach discomfort",
+  "My skin is itchy",
+  "I feel tired all the time",
+];
 
 interface AnalyzerSessionState {
   messages: Msg[];
@@ -97,16 +129,19 @@ function SymptomAnalyzer() {
     appointmentLoading: false,
     appointmentError: null,
     appointmentSuccess: null,
-
   });
 
   const scroller = useRef<HTMLDivElement>(null);
   const sessionIdRef = useRef(crypto.randomUUID());
-  const handlePatientDetailsValidationFail = () => {console.log("Patient details validation failed");};
-
+  const handlePatientDetailsValidationFail = () => {
+    console.log("Patient details validation failed");
+  };
 
   useEffect(() => {
-    scroller.current?.scrollTo({ top: scroller.current.scrollHeight, behavior: "smooth" });
+    scroller.current?.scrollTo({
+      top: scroller.current.scrollHeight,
+      behavior: "smooth",
+    });
   }, [analyzerState.messages, analyzerState.thinking]);
 
   // Run the database test exactly once when the component first mounts
@@ -128,12 +163,9 @@ function SymptomAnalyzer() {
         details,
         analyzerState.state.symptoms,
         "medium", // Will be updated after analysis
-        "Patient information received. Starting symptom analysis..."
+        "Patient information received. Starting symptom analysis...",
       );
-      localStorage.setItem(
-        "patientId",
-        record.id
-      );
+      localStorage.setItem("patientId", record.id);
 
       setAnalyzerState((s) => ({
         ...s,
@@ -153,24 +185,33 @@ function SymptomAnalyzer() {
       setAnalyzerState((s) => ({
         ...s,
         patientLoading: false,
-        patientError: error instanceof Error ? error.message : "Failed to save patient information",
+        patientError:
+          error instanceof Error
+            ? error.message
+            : "Failed to save patient information",
       }));
     }
 
-  // This function will be called by PatientDetailsForm on validation failure
-  function handlePatientDetailsValidationFail(errors: Record<string, string>) {
-    const errorMessages = Object.values(errors).join(" ");
-    setAnalyzerState((s) => ({
-      ...s,
-      patientLoading: false,
-      // Display a generic message, but individual fields will show specific errors.
-      // Or, you could concatenate them.
-      patientError: "Please correct the errors in the form.",
-    }));
-  }
+    // This function will be called by PatientDetailsForm on validation failure
+    function handlePatientDetailsValidationFail(
+      errors: Record<string, string>,
+    ) {
+      const errorMessages = Object.values(errors).join(" ");
+      setAnalyzerState((s) => ({
+        ...s,
+        patientLoading: false,
+        // Display a generic message, but individual fields will show specific errors.
+        // Or, you could concatenate them.
+        patientError: "Please correct the errors in the form.",
+      }));
+    }
   }
 
-  async function initiateAICallAndBooking(severity: Severity, summary: string, advice: string[]) {
+  async function initiateAICallAndBooking(
+    severity: Severity,
+    summary: string,
+    advice: string[],
+  ) {
     const patientRecord = analyzerState.patientRecord;
     const patientDetails = analyzerState.patientDetails;
     if (!patientRecord || !patientDetails) return;
@@ -179,7 +220,7 @@ function SymptomAnalyzer() {
       patientDetails.name,
       severity,
       summary,
-      advice
+      advice,
     );
 
     setAnalyzerState((s) => ({
@@ -203,7 +244,8 @@ function SymptomAnalyzer() {
           console.error("AI call initiation failed:", error);
           setAnalyzerState((s) => ({
             ...s,
-            patientError: "Failed to initiate AI call. Please try booking manually.",
+            patientError:
+              "Failed to initiate AI call. Please try booking manually.",
           }));
         });
       }, 1000);
@@ -211,13 +253,18 @@ function SymptomAnalyzer() {
       console.error("Error preparing AI call:", error);
       setAnalyzerState((s) => ({
         ...s,
-        patientError: error instanceof Error ? error.message : "Failed to initiate AI call",
+        patientError:
+          error instanceof Error ? error.message : "Failed to initiate AI call",
       }));
     }
   }
 
   async function handleBookAppointment() {
-    if (!analyzerState.patientRecord || !analyzerState.appointmentDate || !analyzerState.appointmentTime) {
+    if (
+      !analyzerState.patientRecord ||
+      !analyzerState.appointmentDate ||
+      !analyzerState.appointmentTime
+    ) {
       setAnalyzerState((s) => ({
         ...s,
         appointmentError: "Please choose a date and time before booking.",
@@ -236,14 +283,14 @@ function SymptomAnalyzer() {
       const appointment = await bookAppointment(
         analyzerState.patientRecord.id,
         analyzerState.appointmentDate,
-        analyzerState.appointmentTime
+        analyzerState.appointmentTime,
       );
 
       await updatePatientAppointment(
         analyzerState.patientRecord.id,
         analyzerState.appointmentDate,
         analyzerState.appointmentTime,
-        appointment.appointmentId
+        appointment.appointmentId,
       );
 
       setAnalyzerState((s) => ({
@@ -255,7 +302,7 @@ function SymptomAnalyzer() {
           ...s.messages,
           {
             role: "ai",
-            content: `Your appointment is confirmed for ${s.appointmentDate} at ${s.appointmentTime}. Appointment ID: ${appointment.appointmentId}. A confirmation has been sent to ${s.patientDetails?.email ?? 'your email'}.`,
+            content: `Your appointment is confirmed for ${s.appointmentDate} at ${s.appointmentTime}. Appointment ID: ${appointment.appointmentId}. A confirmation has been sent to ${s.patientDetails?.email ?? "your email"}.`,
           },
         ],
       }));
@@ -263,7 +310,8 @@ function SymptomAnalyzer() {
       setAnalyzerState((s) => ({
         ...s,
         appointmentLoading: false,
-        appointmentError: error instanceof Error ? error.message : "Failed to book appointment",
+        appointmentError:
+          error instanceof Error ? error.message : "Failed to book appointment",
       }));
     }
   }
@@ -293,7 +341,10 @@ function SymptomAnalyzer() {
     } else if (analyzerState.pendingQ) {
       newAnalyzerState = {
         ...analyzerState.state,
-        answers: { ...analyzerState.state.answers, [analyzerState.pendingQ]: trimmed },
+        answers: {
+          ...analyzerState.state.answers,
+          [analyzerState.pendingQ]: trimmed,
+        },
         asked: analyzerState.state.asked.includes(analyzerState.pendingQ)
           ? analyzerState.state.asked
           : [...analyzerState.state.asked, analyzerState.pendingQ],
@@ -312,20 +363,30 @@ function SymptomAnalyzer() {
     }));
 
     setTimeout(() => {
-      const totalAnswered = Object.keys(newAnalyzerState.answers).length + (isInitial ? 0 : 1);
+      const totalAnswered =
+        Object.keys(newAnalyzerState.answers).length + (isInitial ? 0 : 1);
       const enough = totalAnswered >= 4;
 
       if (enough) {
         const result = analyzeSeverity(newAnalyzerState);
-        const onBook = () => setAnalyzerState((s) => ({ ...s, showAppointmentDialog: true }));
+        const onBook = () =>
+          setAnalyzerState((s) => ({ ...s, showAppointmentDialog: true }));
 
         setAnalyzerState((s) => ({
           ...s,
           messages: [
             ...s.messages,
-            { role: "ai", content: "Thank you. Based on what you've shared, here's my preliminary assessment:" },
+            {
+              role: "ai",
+              content:
+                "Thank you. Based on what you've shared, here's my preliminary assessment:",
+            },
             { role: "result", ...result, onBook },
-            { role: "ai", content: "Would you like me to book a doctor appointment with your preferred date and time slot?" },
+            {
+              role: "ai",
+              content:
+                "Would you like me to book a doctor appointment with your preferred date and time slot?",
+            },
           ],
           state: { ...newAnalyzerState, finished: true },
           pendingQ: null,
@@ -336,25 +397,36 @@ function SymptomAnalyzer() {
           updatePatientRecord(analyzerState.patientRecord.id, {
             severity: result.severity,
             summary: result.summary,
-          }).catch((error) => console.error("Failed to update patient record:", error));
+          }).catch((error) =>
+            console.error("Failed to update patient record:", error),
+          );
         }
 
         // Initiate AI call after 2 seconds if patient details are saved
         setTimeout(() => {
-          initiateAICallAndBooking(result.severity, result.summary, result.advice);
+          initiateAICallAndBooking(
+            result.severity,
+            result.summary,
+            result.advice,
+          );
         }, 2000);
       } else {
         const fu = nextFollowUp(newAnalyzerState);
         if (!fu) {
           const result = analyzeSeverity(newAnalyzerState);
-          const appointmentOnBook = () => setAnalyzerState((s) => ({ ...s, showAppointmentDialog: true }));
+          const appointmentOnBook = () =>
+            setAnalyzerState((s) => ({ ...s, showAppointmentDialog: true }));
           setAnalyzerState((s) => ({
             ...s,
             messages: [
               ...s.messages,
               { role: "ai", content: "Here is my preliminary assessment:" },
               { role: "result", ...result, onBook: appointmentOnBook },
-              { role: "ai", content: "Would you like me to book a doctor appointment with your preferred date and time slot?" },
+              {
+                role: "ai",
+                content:
+                  "Would you like me to book a doctor appointment with your preferred date and time slot?",
+              },
             ],
             state: { ...newAnalyzerState, finished: true },
             pendingQ: null,
@@ -365,18 +437,27 @@ function SymptomAnalyzer() {
             updatePatientRecord(analyzerState.patientRecord.id, {
               severity: result.severity,
               summary: result.summary,
-            }).catch((error) => console.error("Failed to update patient record:", error));
+            }).catch((error) =>
+              console.error("Failed to update patient record:", error),
+            );
           }
 
           // Initiate AI call
           setTimeout(() => {
-            initiateAICallAndBooking(result.severity, result.summary, result.advice);
+            initiateAICallAndBooking(
+              result.severity,
+              result.summary,
+              result.advice,
+            );
           }, 2000);
         } else {
           setAnalyzerState((s) => ({
             ...s,
             messages: [...s.messages, { role: "ai", content: fu.question }],
-            state: { ...newAnalyzerState, asked: [...newAnalyzerState.asked, fu.id] },
+            state: {
+              ...newAnalyzerState,
+              asked: [...newAnalyzerState.asked, fu.id],
+            },
             pendingQ: fu.id,
             thinking: false,
           }));
@@ -418,11 +499,18 @@ function SymptomAnalyzer() {
       <main className="container mx-auto flex w-full max-w-4xl flex-1 flex-col px-4 py-8">
         <div className="mb-5 flex items-center justify-between">
           <div>
-            <Link to="/" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
+            <Link
+              to="/"
+              className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+            >
               <ArrowLeft className="h-3 w-3" /> Back to home
             </Link>
-            <h1 className="mt-2 font-display text-3xl font-bold">AI Symptom Analyzer</h1>
-            <p className="text-sm text-muted-foreground">A safe, conversational pre-triage. Not a substitute for a doctor.</p>
+            <h1 className="mt-2 font-display text-3xl font-bold">
+              AI Symptom Analyzer
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              A safe, conversational pre-triage. Not a substitute for a doctor.
+            </p>
           </div>
           <Button variant="outline" size="sm" onClick={reset}>
             <RotateCcw className="mr-1 h-3.5 w-3.5" /> Restart
@@ -450,15 +538,23 @@ function SymptomAnalyzer() {
             </Badge>
           </div>
 
-          <div ref={scroller} className="flex-1 space-y-4 overflow-y-auto px-5 py-6" style={{ maxHeight: "60vh" }}>
-            {analyzerState.messages.map((m, i) => <MessageBubble key={i} msg={m} />)}
+          <div
+            ref={scroller}
+            className="flex-1 space-y-4 overflow-y-auto px-5 py-6"
+            style={{ maxHeight: "60vh" }}
+          >
+            {analyzerState.messages.map((m, i) => (
+              <MessageBubble key={i} msg={m} />
+            ))}
             {analyzerState.thinking && (
               <div className="flex items-center gap-3">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-care-gradient text-white">
                   <Bot className="h-4 w-4" />
                 </div>
                 <div className="flex gap-1 rounded-2xl bg-muted px-4 py-3">
-                  <Dot /><Dot delay={120} /><Dot delay={240} />
+                  <Dot />
+                  <Dot delay={120} />
+                  <Dot delay={240} />
                 </div>
               </div>
             )}
@@ -467,8 +563,11 @@ function SymptomAnalyzer() {
           {!analyzerState.state.symptoms && (
             <div className="flex flex-wrap gap-2 border-t border-border bg-muted/30 px-5 py-3">
               {EXAMPLES.map((e) => (
-                <button key={e} onClick={() => send(e)}
-                  className="rounded-full border border-border bg-card px-3 py-1.5 text-xs hover:border-primary hover:text-primary transition">
+                <button
+                  key={e}
+                  onClick={() => send(e)}
+                  className="rounded-full border border-border bg-card px-3 py-1.5 text-xs hover:border-primary hover:text-primary transition"
+                >
                   {e}
                 </button>
               ))}
@@ -476,15 +575,22 @@ function SymptomAnalyzer() {
           )}
 
           <form
-            onSubmit={(e) => { e.preventDefault(); send(analyzerState.input); }}
+            onSubmit={(e) => {
+              e.preventDefault();
+              send(analyzerState.input);
+            }}
             className="flex items-center gap-2 border-t border-border bg-background p-3"
           >
             <div className="flex flex-1 items-center gap-2 rounded-full border border-border bg-card px-4 py-2">
               <Sparkles className="h-4 w-4 text-primary" />
               <input
                 value={analyzerState.input}
-                onChange={(e) => setAnalyzerState((s) => ({ ...s, input: e.target.value }))}
-                disabled={analyzerState.state.finished || analyzerState.showPatientForm}
+                onChange={(e) =>
+                  setAnalyzerState((s) => ({ ...s, input: e.target.value }))
+                }
+                disabled={
+                  analyzerState.state.finished || analyzerState.showPatientForm
+                }
                 placeholder={
                   analyzerState.state.finished
                     ? "Conversation complete — restart to begin again"
@@ -497,7 +603,11 @@ function SymptomAnalyzer() {
             </div>
             <Button
               type="submit"
-              disabled={analyzerState.state.finished || !analyzerState.input.trim() || analyzerState.showPatientForm}
+              disabled={
+                analyzerState.state.finished ||
+                !analyzerState.input.trim() ||
+                analyzerState.showPatientForm
+              }
               className="bg-care-gradient text-white"
             >
               <Send className="h-4 w-4" />
@@ -506,15 +616,19 @@ function SymptomAnalyzer() {
         </div>
 
         {/* Patient Details Form Modal */}
-        <Dialog open={analyzerState.showPatientForm} onOpenChange={(open) => {
-          if (!open && analyzerState.patientLoading) return; // Don't close while loading
-          setAnalyzerState((s) => ({ ...s, showPatientForm: open }));
-        }}>
+        <Dialog
+          open={analyzerState.showPatientForm}
+          onOpenChange={(open) => {
+            if (!open && analyzerState.patientLoading) return; // Don't close while loading
+            setAnalyzerState((s) => ({ ...s, showPatientForm: open }));
+          }}
+        >
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle>Your Health Information</DialogTitle>
               <DialogDescription>
-                We need your contact details to provide personalized care and connect you with a doctor
+                We need your contact details to provide personalized care and
+                connect you with a doctor
               </DialogDescription>
             </DialogHeader>
             <PatientDetailsForm
@@ -527,9 +641,12 @@ function SymptomAnalyzer() {
         </Dialog>
 
         {/* AI Call Dialog */}
-        <Dialog open={analyzerState.showAICallDialog} onOpenChange={(open) =>
-          setAnalyzerState((s) => ({ ...s, showAICallDialog: open }))
-        }>
+        <Dialog
+          open={analyzerState.showAICallDialog}
+          onOpenChange={(open) =>
+            setAnalyzerState((s) => ({ ...s, showAICallDialog: open }))
+          }
+        >
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
@@ -544,13 +661,17 @@ function SymptomAnalyzer() {
                   <div>
                     <p className="font-medium text-sm">Call Initiated</p>
                     <p className="text-xs text-muted-foreground">
-                      Our AI will call you on {analyzerState.patientDetails?.phone} within the next 60 seconds
+                      Our AI will call you on{" "}
+                      {analyzerState.patientDetails?.phone} within the next 60
+                      seconds
                     </p>
                   </div>
                 </div>
 
                 <div className="border-t pt-3">
-                  <p className="text-xs font-medium text-muted-foreground mb-2">Call Script:</p>
+                  <p className="text-xs font-medium text-muted-foreground mb-2">
+                    Call Script:
+                  </p>
                   <p className="text-sm leading-relaxed text-foreground italic">
                     "{analyzerState.aiCallScript}"
                   </p>
@@ -559,13 +680,17 @@ function SymptomAnalyzer() {
 
               <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/30 rounded-lg p-3">
                 <p className="text-xs text-amber-900 dark:text-amber-100">
-                  💡 <strong>Tip:</strong> Make sure you're in a quiet place and ready to discuss your preferred appointment date and time with the AI.
+                  💡 <strong>Tip:</strong> Make sure you're in a quiet place and
+                  ready to discuss your preferred appointment date and time with
+                  the AI.
                 </p>
               </div>
 
               <Button
                 className="w-full bg-care-gradient text-white"
-                onClick={() => setAnalyzerState((s) => ({ ...s, showAICallDialog: false }))}
+                onClick={() =>
+                  setAnalyzerState((s) => ({ ...s, showAICallDialog: false }))
+                }
               >
                 <Calendar className="mr-2 h-4 w-4" />
                 Go to Appointment Booking
@@ -575,14 +700,18 @@ function SymptomAnalyzer() {
         </Dialog>
 
         {/* Appointment Booking Dialog */}
-        <Dialog open={analyzerState.showAppointmentDialog} onOpenChange={(open) =>
-          setAnalyzerState((s) => ({ ...s, showAppointmentDialog: open }))
-        }>
+        <Dialog
+          open={analyzerState.showAppointmentDialog}
+          onOpenChange={(open) =>
+            setAnalyzerState((s) => ({ ...s, showAppointmentDialog: open }))
+          }
+        >
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle>Book a Doctor Appointment</DialogTitle>
               <DialogDescription>
-                Select your preferred date and time so the AI can finalize booking after your call.
+                Select your preferred date & time so that the AI can finalize
+                booking after your call.
               </DialogDescription>
             </DialogHeader>
 
@@ -593,7 +722,12 @@ function SymptomAnalyzer() {
                   <input
                     type="date"
                     value={analyzerState.appointmentDate}
-                    onChange={(e) => setAnalyzerState((s) => ({ ...s, appointmentDate: e.target.value }))}
+                    onChange={(e) =>
+                      setAnalyzerState((s) => ({
+                        ...s,
+                        appointmentDate: e.target.value,
+                      }))
+                    }
                     className="rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none"
                   />
                 </label>
@@ -603,7 +737,12 @@ function SymptomAnalyzer() {
                   <input
                     type="time"
                     value={analyzerState.appointmentTime}
-                    onChange={(e) => setAnalyzerState((s) => ({ ...s, appointmentTime: e.target.value }))}
+                    onChange={(e) =>
+                      setAnalyzerState((s) => ({
+                        ...s,
+                        appointmentTime: e.target.value,
+                      }))
+                    }
                     className="rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none"
                   />
                 </label>
@@ -626,7 +765,9 @@ function SymptomAnalyzer() {
                 onClick={handleBookAppointment}
                 disabled={analyzerState.appointmentLoading}
               >
-                {analyzerState.appointmentLoading ? "Booking appointment..." : "Confirm Appointment"}
+                {analyzerState.appointmentLoading
+                  ? "Booking appointment..."
+                  : "Confirm Appointment"}
               </Button>
             </div>
           </DialogContent>
@@ -638,62 +779,131 @@ function SymptomAnalyzer() {
 }
 
 function Dot({ delay = 0 }: { delay?: number }) {
-  return <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground/60" style={{ animationDelay: `${delay}ms` }} />;
+  return (
+    <span
+      className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground/60"
+      style={{ animationDelay: `${delay}ms` }}
+    />
+  );
 }
 
 function MessageBubble({ msg }: { msg: Msg }) {
-  if (msg.role === "result") return <SeverityCard severity={msg.severity} summary={msg.summary} advice={msg.advice} onBook={msg.onBook} />;
+  if (msg.role === "result")
+    return (
+      <SeverityCard
+        severity={msg.severity}
+        summary={msg.summary}
+        advice={msg.advice}
+        onBook={msg.onBook}
+      />
+    );
   const isUser = msg.role === "user";
   return (
-    <div className={`flex items-start gap-3 ${isUser ? "flex-row-reverse" : ""}`}>
-      <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${isUser ? "bg-primary text-primary-foreground" : "bg-care-gradient text-white"}`}>
+    <div
+      className={`flex items-start gap-3 ${isUser ? "flex-row-reverse" : ""}`}
+    >
+      <div
+        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${isUser ? "bg-primary text-primary-foreground" : "bg-care-gradient text-white"}`}
+      >
         {isUser ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
       </div>
-      <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${isUser ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}>
+      <div
+        className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${isUser ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}
+      >
         {msg.content}
       </div>
     </div>
   );
 }
 
-function SeverityCard({ severity, summary, advice, onBook }: { severity: Severity; summary: string; advice: string[]; onBook?: () => void }) {
+function SeverityCard({
+  severity,
+  summary,
+  advice,
+  onBook,
+}: {
+  severity: Severity;
+  summary: string;
+  advice: string[];
+  onBook?: () => void;
+}) {
   const config = {
-    low: { label: "Low Severity", tone: "bg-secondary/15 border-secondary/40 text-secondary-foreground", chip: "bg-secondary text-secondary-foreground", icon: ShieldCheck },
-    medium: { label: "Medium Severity", tone: "bg-warning/15 border-warning/40 text-warning-foreground", chip: "bg-warning text-warning-foreground", icon: Sparkles },
-    high: { label: "High Severity", tone: "bg-destructive/10 border-destructive/40 text-destructive", chip: "bg-destructive text-destructive-foreground", icon: AlertTriangle },
+    low: {
+      label: "Low Severity",
+      tone: "bg-secondary/15 border-secondary/40 text-secondary-foreground",
+      chip: "bg-secondary text-secondary-foreground",
+      icon: ShieldCheck,
+    },
+    medium: {
+      label: "Medium Severity",
+      tone: "bg-warning/15 border-warning/40 text-warning-foreground",
+      chip: "bg-warning text-warning-foreground",
+      icon: Sparkles,
+    },
+    high: {
+      label: "High Severity",
+      tone: "bg-destructive/10 border-destructive/40 text-destructive",
+      chip: "bg-destructive text-destructive-foreground",
+      icon: AlertTriangle,
+    },
   }[severity];
   const Icon = config.icon;
 
   return (
     <div className={`rounded-2xl border-2 p-5 ${config.tone}`}>
       <div className="flex items-center gap-3">
-        <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${config.chip}`}>
+        <span
+          className={`flex h-9 w-9 items-center justify-center rounded-xl ${config.chip}`}
+        >
           <Icon className="h-5 w-5" />
         </span>
         <div>
-          <div className="text-xs font-semibold uppercase tracking-wider opacity-80">AI Assessment</div>
+          <div className="text-xs font-semibold uppercase tracking-wider opacity-80">
+            AI Assessment
+          </div>
           <div className="font-display text-lg font-bold">{config.label}</div>
         </div>
       </div>
       <p className="mt-4 text-sm">{summary}</p>
       <ul className="mt-4 space-y-2 text-sm">
-        {advice.map((a) => <li key={a} className="flex gap-2"><span>•</span><span>{a}</span></li>)}
+        {advice.map((a) => (
+          <li key={a} className="flex gap-2">
+            <span>•</span>
+            <span>{a}</span>
+          </li>
+        ))}
       </ul>
       {onBook ? (
-        <Button size="lg" className="mt-5 w-full bg-care-gradient text-white shadow-glow" onClick={onBook}>
+        <Button
+          size="lg"
+          className="mt-5 w-full bg-care-gradient text-white shadow-glow"
+          onClick={onBook}
+        >
           <Calendar className="mr-2 h-5 w-5" />
-          {severity === "high" ? "Book Appointment Now — Urgent" : "Book Appointment"}
+          {severity === "high"
+            ? "Book Appointment Now — Urgent"
+            : "Book Appointment"}
         </Button>
       ) : severity !== "low" ? (
-        <Button asChild size="lg" className="mt-5 w-full bg-care-gradient text-white shadow-glow">
+        <Button
+          asChild
+          size="lg"
+          className="mt-5 w-full bg-care-gradient text-white shadow-glow"
+        >
           <Link to="/appointment">
             <Calendar className="mr-2 h-5 w-5" />
-            {severity === "high" ? "Book Appointment Now — Urgent" : "Book Appointment"}
+            {severity === "high"
+              ? "Book Appointment Now — Urgent"
+              : "Book Appointment"}
           </Link>
         </Button>
       ) : (
         <div className="mt-4 text-xs opacity-80">
-          If symptoms persist beyond 3 days, please <Link to="/appointment" className="underline font-semibold">book a consultation</Link>.
+          If symptoms persist beyond 3 days, please{" "}
+          <Link to="/appointment" className="underline font-semibold">
+            book a consultation
+          </Link>
+          .
         </div>
       )}
     </div>
