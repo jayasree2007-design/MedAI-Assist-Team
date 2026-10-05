@@ -24,7 +24,7 @@ export function SiteFooter() {
         ]} />
         <FooterCol title="Company" links={[
           ["About", "/"],
-          ["Doctors", "/doctor-dashboard"],
+          ["Doctors", "/doctors"],
           ["Contact", "/"],
         ]} />
         <FooterCol title="Legal" links={[

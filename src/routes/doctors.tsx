@@ -66,7 +66,7 @@ function DoctorsPage() {
                 Our Doctors
               </h1>
               <p className="mx-auto mt-4 max-w-2xl text-base text-slate-600 sm:text-lg">
-                Meet our experienced healthcare professionals dedicated to providing trusted and personalized care.
+                Meet our experienced healthcare professionals dedicated to providing trusted and personalized health care.
               </p>
             </header>
 
