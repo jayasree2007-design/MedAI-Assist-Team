@@ -17,34 +17,51 @@ interface PatientDetailsFormProps {
   onValidationFail?: (errors: Record<string, string>) => void;
 }
 
-export function PatientDetailsForm({ onSubmit, isLoading = false, error, onValidationFail }: PatientDetailsFormProps) {
+export function PatientDetailsForm({
+  onSubmit,
+  isLoading = false,
+  error,
+  onValidationFail,
+}: PatientDetailsFormProps) {
   const [formData, setFormData] = useState<PatientDetails>({
     name: "",
     phone: "",
     email: "",
   });
-  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, string>
+  >({});
 
   const validateForm = () => {
     const errors: Record<string, string> = {};
 
+    // NAME VALIDATION
     if (!formData.name.trim()) {
       errors.name = "Name is required";
+    } else if (!/^[A-Za-z ]+$/.test(formData.name)) {
+      errors.name = "Name can contain only letters and spaces";
+    } else if (formData.name.trim().length < 2) {
+      errors.name = "Name must contain at least 2 characters";
+    } else if (formData.name.trim().length > 50) {
+      errors.name = "Name must not exceed 50 characters";
     }
 
-    const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
+    // PHONE VALIDATION
     if (!formData.phone.trim()) {
       errors.phone = "Phone number is required";
-    } else if (!phoneRegex.test(formData.phone)) {
-      errors.phone = "Please enter a valid phone number";
+    } else if (!/^\d{10}$/.test(formData.phone)) {
+      errors.phone = "Phone number must contain exactly 10 digits";
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (
-      formData.email.trim() &&
-      !emailRegex.test(formData.email)
-    ) {
-      errors.email = "Please enter a valid email address";
+    // EMAIL VALIDATION
+    if (formData.email.trim()) {
+      const emailRegex =
+        /^[A-Za-z0-9._%+-]+@[A-Za-z][A-Za-z0-9-]*\.[A-Za-z]{2,}$/;
+
+      if (!emailRegex.test(formData.email.trim())) {
+        errors.email = "Please enter a valid email address";
+      }
     }
 
     setValidationErrors(errors);
@@ -53,20 +70,58 @@ export function PatientDetailsForm({ onSubmit, isLoading = false, error, onValid
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     if (validateForm()) {
       onSubmit(formData);
     } else if (onValidationFail) {
-      // Call the new onValidationFail prop with the errors
       onValidationFail(validationErrors);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const { name, value } = e.target;
+
+    // NAME: allow only letters and spaces
+    if (name === "name") {
+      if (!/^[A-Za-z ]*$/.test(value)) {
+        return;
+      }
+
+      if (value.length > 50) {
+        return;
+      }
+    }
+
+    // PHONE: allow only digits and maximum 10 digits
+    if (name === "phone") {
+      const digitsOnly = value.replace(/\D/g, "");
+
+      if (digitsOnly.length > 10) {
+        return;
+      }
+
+      setFormData((prev) => ({
+        ...prev,
+        phone: digitsOnly,
+      }));
+
+      if (validationErrors.phone) {
+        setValidationErrors((prev) => ({
+          ...prev,
+          phone: "",
+        }));
+      }
+
+      return;
+    }
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
+
     // Clear validation error for this field when user starts typing
     if (validationErrors[name]) {
       setValidationErrors((prev) => ({
@@ -79,9 +134,12 @@ export function PatientDetailsForm({ onSubmit, isLoading = false, error, onValid
   return (
     <div className="rounded-2xl border-2 border-primary/30 bg-primary/5 p-6 space-y-5">
       <div>
-        <h3 className="font-display text-lg font-bold text-foreground">Patient Information</h3>
+        <h3 className="font-display text-lg font-bold text-foreground">
+          Patient Information
+        </h3>
         <p className="text-sm text-muted-foreground mt-1">
-          We need your details to connect you with a doctor and for our records
+          We need your details to connect you with a doctor and for our
+          records
         </p>
       </div>
 
@@ -97,20 +155,26 @@ export function PatientDetailsForm({ onSubmit, isLoading = false, error, onValid
           <Label htmlFor="name" className="text-sm font-medium">
             Full Name *
           </Label>
+
           <Input
             id="name"
             name="name"
             type="text"
-            placeholder="John Doe"
+            placeholder="Enter your full name"
             value={formData.name}
             onChange={handleChange}
             disabled={isLoading}
-            className={validationErrors.name ? "border-destructive" : ""}
+            maxLength={50}
+            className={
+              validationErrors.name ? "border-destructive" : ""
+            }
             autoComplete="name"
           />
+
           {validationErrors.name && (
             <p className="text-xs text-destructive flex items-center gap-1">
-              <AlertCircle className="h-3 w-3" /> {validationErrors.name}
+              <AlertCircle className="h-3 w-3" />
+              {validationErrors.name}
             </p>
           )}
         </div>
@@ -119,20 +183,27 @@ export function PatientDetailsForm({ onSubmit, isLoading = false, error, onValid
           <Label htmlFor="phone" className="text-sm font-medium">
             Phone Number *
           </Label>
+
           <Input
             id="phone"
             name="phone"
             type="tel"
-            placeholder="+1 (555) 123-4567"
+            inputMode="numeric"
+            placeholder="Enter mobile number"
             value={formData.phone}
             onChange={handleChange}
             disabled={isLoading}
-            className={validationErrors.phone ? "border-destructive" : ""}
+            maxLength={10}
+            className={
+              validationErrors.phone ? "border-destructive" : ""
+            }
             autoComplete="tel"
           />
+
           {validationErrors.phone && (
             <p className="text-xs text-destructive flex items-center gap-1">
-              <AlertCircle className="h-3 w-3" /> {validationErrors.phone}
+              <AlertCircle className="h-3 w-3" />
+              {validationErrors.phone}
             </p>
           )}
         </div>
@@ -141,6 +212,7 @@ export function PatientDetailsForm({ onSubmit, isLoading = false, error, onValid
           <Label htmlFor="email" className="text-sm font-medium">
             Email Address (optional)
           </Label>
+
           <Input
             id="email"
             name="email"
@@ -149,12 +221,16 @@ export function PatientDetailsForm({ onSubmit, isLoading = false, error, onValid
             value={formData.email}
             onChange={handleChange}
             disabled={isLoading}
-            className={validationErrors.email ? "border-destructive" : ""}
+            className={
+              validationErrors.email ? "border-destructive" : ""
+            }
             autoComplete="email"
           />
+
           {validationErrors.email && (
             <p className="text-xs text-destructive flex items-center gap-1">
-              <AlertCircle className="h-3 w-3" /> {validationErrors.email}
+              <AlertCircle className="h-3 w-3" />
+              {validationErrors.email}
             </p>
           )}
         </div>
@@ -179,7 +255,8 @@ export function PatientDetailsForm({ onSubmit, isLoading = false, error, onValid
       </form>
 
       <p className="text-xs text-muted-foreground text-center">
-        Your information is secure and will only be used for appointment scheduling and healthcare purposes.
+        Your information is secure and will only be used for appointment
+        scheduling and healthcare purposes.
       </p>
     </div>
   );

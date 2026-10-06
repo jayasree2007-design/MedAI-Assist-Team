@@ -117,7 +117,7 @@ function Landing() {
 } */
 function Hero() {
   return (
-    <section className="relative m-0 w-full overflow-hidden p-0 bg-white">
+    <section className="relative m-0 w-full overflow-hidden p-0 bg-white min-h-[520px] sm:min-h-[560px] lg:min-h-0 lg:aspect-[1672/941] flex items-center">
       {/* Heartbeat animation – only the heart layer pulses (lub-dub) */}
       <style>{`
         @keyframes heart-lub-dub {
@@ -136,36 +136,33 @@ function Hero() {
         @media (prefers-reduced-motion: reduce) {
           .hero-heart-pulse { animation: none; }
         }
+        @media (max-width: 1023px) {
+          .hero-bg-artwork {
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%);
+            min-height: 100%;
+            min-width: 100%;
+            width: auto;
+            height: auto;
+          }
+        }
+        @media (min-width: 1024px) {
+          .hero-bg-artwork {
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            transform: none;
+          }
+        }
       `}</style>
 
-      <div className="relative w-full">
-        {/* Text block: stacked above the image on mobile, overlaid on the left on large screens */}
-        <div className="relative z-10 px-6 pb-6 pt-10 sm:px-10 lg:absolute lg:inset-y-0 lg:left-0 lg:flex lg:w-[48%] lg:items-center lg:pb-0 lg:pl-[6%] lg:pr-4 lg:pt-0">
-          <div className="max-w-xl">
-            <h1 className="font-display text-4xl leading-[1.1] tracking-tight text-slate-900 sm:text-5xl lg:text-4xl xl:text-5xl 2xl:text-6xl">
-              <span className="block font-medium">Smart HealthCare with</span>
-              <span className="block font-extrabold text-primary">AI Assistance</span>
-            </h1>
-            <p className="mt-5 max-w-md text-base text-slate-600 md:text-lg lg:text-base xl:text-lg">
-              Get personalized symptom guidance, upload medical reports, connect with doctors, and track your recovery journey — all in one trusted platform.
-            </p>
-            <div className="mt-7 flex flex-wrap gap-3">
-              <Button asChild size="lg" className="bg-care-gradient text-white shadow-glow hover:opacity-95">
-                <Link to="/symptom-analyzer">
-                  <MessageSquareText className="mr-2 h-5 w-5" /> Try Symptoms
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="bg-white/70 backdrop-blur">
-                <Link to="/appointment">
-                  <Calendar className="mr-2 h-5 w-5" /> Book Appointment
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Image + heart overlay (same aspect ratio as the artwork so percentages line up) */}
-        <div className="relative w-full" style={{ aspectRatio: "1672 / 941" }}>
+      {/* Background layer: artwork image + synchronized pulsing heart */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
+        <div
+          className="hero-bg-artwork absolute"
+          style={{ aspectRatio: "1672 / 941" }}
+        >
           <img
             src={heroImg}
             alt="AI-powered healthcare with human organs and heart health monitoring"
@@ -180,6 +177,34 @@ function Hero() {
             className="hero-heart-pulse pointer-events-none absolute select-none"
             style={{ left: "64.593%", top: "12.752%", width: "26.316%", height: "56.323%" }}
           />
+        </div>
+
+        {/* Subtle overlay on mobile to keep typography crisp while letting the beating heart shine through */}
+        <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-white/35 sm:via-white/70 sm:to-white/20 lg:hidden pointer-events-none" />
+      </div>
+
+      {/* Foreground Hero Content */}
+      <div className="relative z-10 w-full px-6 py-14 sm:px-10 sm:py-16 lg:h-full lg:w-[48%] lg:flex lg:items-center lg:py-0 lg:pl-[6%] lg:pr-4">
+        <div className="max-w-xl">
+          <h1 className="font-display text-4xl leading-[1.1] tracking-tight text-slate-900 sm:text-5xl lg:text-4xl xl:text-5xl 2xl:text-6xl">
+            <span className="block font-medium">Smart HealthCare with</span>
+            <span className="block font-extrabold text-primary">AI Assistance</span>
+          </h1>
+          <p className="mt-5 max-w-md text-base text-slate-600 md:text-lg lg:text-base xl:text-lg">
+            Get personalized symptom guidance, upload medical reports, connect with doctors, and track your recovery journey — all in one trusted platform.
+          </p>
+          <div className="mt-7 flex flex-wrap gap-3">
+            <Button asChild size="lg" className="bg-care-gradient text-white shadow-glow hover:opacity-95">
+              <Link to="/symptom-analyzer">
+                <MessageSquareText className="mr-2 h-5 w-5" /> Try Symptoms
+              </Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="bg-white/70 backdrop-blur">
+              <Link to="/appointment">
+                <Calendar className="mr-2 h-5 w-5" /> Book Appointment
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
     </section>
