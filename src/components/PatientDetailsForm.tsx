@@ -189,7 +189,7 @@ export function PatientDetailsForm({
             name="phone"
             type="tel"
             inputMode="numeric"
-            placeholder="Enter mobile number"
+            placeholder="Enter your mobile number"
             value={formData.phone}
             onChange={handleChange}
             disabled={isLoading}
@@ -217,7 +217,7 @@ export function PatientDetailsForm({
             id="email"
             name="email"
             type="email"
-            placeholder="john@example.com"
+            placeholder="Enter your email address"
             value={formData.email}
             onChange={handleChange}
             disabled={isLoading}
