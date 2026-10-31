@@ -8,6 +8,7 @@ import { DoctorsBackground } from "@/components/doctors/DoctorsBackground";
 import { DoctorCard } from "@/components/doctors/DoctorCard";
 import { DoctorProfile } from "@/components/doctors/DoctorProfile";
 import { AppointmentBooking } from "@/components/doctors/AppointmentBooking";
+import { SiteFooter } from "@/components/SiteFooter";
 
 export const Route = createFileRoute("/doctors")({
   head: () => ({
@@ -82,6 +83,7 @@ function DoctorsPage() {
           </div>
         )}
       </div>
+      <SiteFooter/>
     </main>
   );
 }

@@ -110,7 +110,7 @@ export const DOCTORS: Doctor[] = [
     id: "meera-nair", name: "Dr. Meera Nair", specialty: "Gynecologist", experience: 14,
     hospital: "MedAI Women's Care Hospital", location: "Hyderabad",
     summary: "Compassionate women's healthcare covering pregnancy, fertility, PCOS and preventive care.",
-    availability: "unavailable", photo: unsplash("1623854767648-e7bb8009f0db"),
+    availability: "today", photo: unsplash("1623854767648-e7bb8009f0db"),
     qualifications: ["MBBS", "MS (Obstetrics & Gynaecology)"],
     about: "Dr. Meera Nair provides respectful, private and evidence-based care at every stage of a woman's life, from adolescence through pregnancy and menopause.",
     expertise: ["Pregnancy & antenatal care", "PCOS & hormonal health", "Fertility counselling", "Menstrual disorders", "Preventive screenings"],

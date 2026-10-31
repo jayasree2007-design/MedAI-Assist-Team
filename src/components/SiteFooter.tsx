@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ShieldAlert } from "lucide-react";
+import logo from "@/assets/logo.webp"
 
 export function SiteFooter() {
   return (
@@ -10,7 +11,7 @@ export function SiteFooter() {
             {/* MedAI Assist Logo */}
             <div className="flex h-10 w-10 items-center justify-center">
               <img
-                src="src/assets/logo.webp"
+                src={logo}
                 alt="MedAI Assist Logo"
                 className="h-10 w-10 object-contain"
               />
